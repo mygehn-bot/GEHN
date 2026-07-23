@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GEHN - Panel de Administración</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    :root {
+      --bg-color: #0b132b;
+      --card-bg: #1c2541;
+      --accent-color: #00b4d8;
+      --text-color: #ffffff;
+      --text-muted: #a0aec0;
+      --border-color: #3a506b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-container img {
+      max-width: 50px;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    .logo-container h1 {
+      font-size: 1.5rem;
+      color: var(--accent-color);
+    }
+
+    .badge {
+      background-color: rgba(0, 180, 216, 0.2);
+      color: var(--accent-color);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      border: 1px solid var(--accent-color);
+    }
+
+    .stats-card {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 25px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+    }
+
+    .stat-item h3 {
+      font-size: 2rem;
+      color: var(--accent-color);
+    }
+
+    .stat-item p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    .table-container {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background-color: rgba(0, 0, 0, 0.2);
+      color: var(--accent-color);
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+    }
+  </style>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <header>
+    <div class="logo-container">
+      <img src="logo.jpg" alt="Logo GEHN">
+      <h1>Panel de Administración GEHN</h1>
+    </div>
+    <span class="badge">Ecosistema Activo</span>
+  </header>
+
+  <main>
+    <div class="stats-card">
+      <div class="stat-item">
+        <h3 id="total-users">0</h3>
+        <p>Suscriptores Totales</p>
+      </div>
+      <div class="stat-item">
+        <h3 id="last-updated">--</h3>
+        <p>Última Actualización</p>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre Completo</th>
+            <th>Correo Electrónico</th>
+            <th>Fecha de Registro</th>
+          </tr>
+        </thead>
+        <tbody id="users-table-body">
+          <tr>
+            <td colspan="3" class="loading">Cargando registros de la red GEHN...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    // Configuración e Inicialización de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSy...",
+      authDomain: "gehn-107a0.firebaseapp.com",
+      projectId: "gehn-107a0",
+      storageBucket: "gehn-107a0.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abcdef..."
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const tableBody = document.getElementById('users-table-body');
+    const totalUsersElem = document.getElementById('total-users');
+    const lastUpdatedElem = document.getElementById('last-updated');
+
+    // Consultar lista de usuarios en tiempo real
+    db.collection("Usuarios").onSnapshot((snapshot) => {
+      tableBody.innerHTML = "";
+      
+      if (snapshot.empty) {
+        tableBody.innerHTML = `<tr><td colspan="3" class="empty-state">No hay suscriptores registrados aún.</td></tr>`;
+        totalUsersElem.textContent = "0";
+        return;
+      }
+
+      totalUsersElem.textContent = snapshot.size;
+      const now = new Date();
+      lastUpdatedElem.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+          <td><strong>${data.Nombre || 'Sin nombre'}</strong></td>
+          <td>${data.Email || 'Sin correo'}</td>
+          <td>${data.CreadoEn || 'Fecha desconocida'}</td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+    }, (error) => {
+      console.error("Error cargando usuarios:", error);
+      tableBody.innerHTML = `<tr><td colspan="3" class="loading" style="color: #ff6b6b;">Error al cargar la base de datos. Verifica los permisos de Firestore.</td></tr>`;
+    });
+  </script>
+</body>
+</html>
