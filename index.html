@@ -1,73 +1,240 @@
-
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GEHN - Registro</title>
-    <link rel="manifest" href="manifest.json">
+  <title>GEHN - Plataforma Oficial</title>
+  
+  <!-- Configuración PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0d1b2a">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2092/2092663.png">
 
   <style>
+    :root {
+      --primary: #1b263b;
+      --accent: #00b4d8;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text: #0d1b2a;
+    }
 
-    body { font-family: sans-serif; background: #f4f6f8; padding: 20px; display: flex; justify-content: center; }
-    .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-    h2 { color: #1a73e8; margin-top: 0; }
-    input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-    button { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-    #mensaje { margin-top: 15px; font-weight: bold; color: green; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    header {
+      width: 100%;
+      background-color: var(--primary);
+      color: white;
+      text-align: center;
+      padding: 25px 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      box-sizing: border-box;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      color: var(--accent);
+    }
+
+    header p {
+      margin: 5px 0 0;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    main {
+      width: 90%;
+      max-width: 420px;
+      margin: 30px auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 30px 25px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+
+    .card p {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 25px;
+    }
+
+    .input-group {
+      text-align: left;
+      margin-bottom: 15px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: var(--primary);
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.1s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #0096c7;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    button:disabled {
+      background-color: #ccc;
+    }
+
+    #msg {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 20px;
+      font-size: 0.8rem;
+      color: #888;
+    }
   </style>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-<div class="card">
-  <h2>Registro GEHN</h2>
-  <form id="registroForm">
-    <input type="text" id="nombre" placeholder="Nombre completo" required>
-    <input type="email" id="email" placeholder="Correo electrónico" required>
-    <button type="submit">Registrar Suscriptor</button>
-  </form>
-  <div id="mensaje"></div>
-</div>
+  <header>
+    <h1>GEHN</h1>
+    <p>Ecosistema Inteligente de Suscripciones</p>
+  </header>
 
-<!-- SDKs de Firebase Modular CDN -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  <main>
+    <div class="card">
+      <h2>Únete a la Red</h2>
+      <p>Registra tu acceso para recibir novedades e interactuar con el ecosistema GEHN.</p>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDQPQqGLTwogLQtQPZUreCyOxQQPViobcU",
-    authDomain: "gehn-107a0.firebaseapp.com",
-    projectId: "gehn-107a0",
-    storageBucket: "gehn-107a0.firebasestorage.app",
-    messagingSenderId: "1058890124939",
-    appId: "1:1058890124939:web:d04fae09aaf8e29e5c8e8e",
-    measurementId: "G-V43BNVRFR5"
-  };
+      <form id="registroForm">
+        <div class="input-group">
+          <label for="nombre">Nombre completo</label>
+          <input type="text" id="nombre" placeholder="Ej. Juan Pérez" required>
+        </div>
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+        <div class="input-group">
+          <label for="correo">Correo electrónico</label>
+          <input type="email" id="correo" placeholder="ejemplo@correo.com" required>
+        </div>
 
-  document.getElementById('registroForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const nombre = document.getElementById('nombre').value;
-    const email = document.getElementById('email').value;
-    const msg = document.getElementById('mensaje');
+        <button type="submit" id="btnSubmit">Completar Registro</button>
+      </form>
 
-    try {
-      await addDoc(collection(db, "Usuarios"), {
-        Nombre: nombre,
-        Email: email,
-        CreadoEn: new Date().toISOString()
-      });
-      msg.style.color = "green";
-      msg.innerText = "¡Usuario guardado con éxito en Firestore!";
-      document.getElementById('registroForm').reset();
-    } catch (error) {
-      msg.style.color = "red";
-      msg.innerText = "Error al guardar: " + error.message;
+      <div id="msg"></div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2026 GEHN. Todos los derechos reservados.
+  </footer>
+
+  <script>
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDQPgQGLTwqLQtQPZUreCyOxQQPViobcU",
+      authDomain: "gehn-107a0.firebaseapp.com",
+      projectId: "gehn-107a0",
+      storageBucket: "gehn-107a0.firebasestorage.app",
+      messagingSenderId: "1058890124939",
+      appId: "1:1058890124939:web:d04fae09aaf8e29e5c8e8e"
+    };
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Guardar datos en Firestore
+    const form = document.getElementById('registroForm');
+    const msg = document.getElementById('msg');
+    const btn = document.getElementById('btnSubmit');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btn.disabled = true;
+      msg.style.color = '#333';
+      msg.innerText = 'Procesando registro...';
+
+      const nombre = document.getElementById('nombre').value;
+      const correo = document.getElementById('correo').value;
+
+      try {
+        await db.collection('suscriptores').add({
+          nombre: nombre,
+          correo: correo,
+          fechaRegistro: new Date()
+        });
+        msg.style.color = '#2a9d8f';
+        msg.innerText = '¡Bienvenido! Te has registrado con éxito.';
+        form.reset();
+      } catch (error) {
+        msg.style.color = '#e76f51';
+        msg.innerText = 'Error al registrar: ' + error.message;
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // Registrar Service Worker para PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
     }
-  });
-</script>
-
+  </script>
 </body>
 </html>
