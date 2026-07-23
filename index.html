@@ -4,146 +4,161 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GEHN - Plataforma Oficial</title>
-  
-  <!-- Configuración PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0d1b2a">
-  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2092/2092663.png">
-
   <style>
     :root {
-      --primary: #1b263b;
+      --primary: #15263b;
       --accent: #00b4d8;
-      --bg: #f8f9fa;
-      --card-bg: #ffffff;
-      --text: #0d1b2a;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: var(--bg);
       color: var(--text);
-      margin: 0;
-      padding: 0;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
+      padding: 20px;
     }
 
     header {
-      width: 100%;
-      background-color: var(--primary);
-      color: white;
       text-align: center;
-      padding: 25px 15px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-      box-sizing: border-box;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 2rem;
-      letter-spacing: 2px;
-      color: var(--accent);
-    }
-
-    header p {
-      margin: 5px 0 0;
-      font-size: 0.9rem;
-      opacity: 0.8;
-    }
-
-    main {
-      width: 90%;
-      max-width: 420px;
-      margin: 30px auto;
-    }
-
-    .card {
-      background: var(--card-bg);
-      padding: 30px 25px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-      text-align: center;
-    }
-
-    .card h2 {
-      margin-top: 0;
-      color: var(--primary);
-    }
-
-    .card p {
-      color: #666;
-      font-size: 0.95rem;
       margin-bottom: 25px;
     }
 
-    .input-group {
-      text-align: left;
+    header img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+
+    header h1 {
+      color: var(--accent);
+      font-size: 1.8rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      border: 1px solid #334155;
+    }
+
+    /* FORMULARIO */
+    .form-group {
       margin-bottom: 15px;
     }
 
-    .input-group label {
+    label {
       display: block;
-      font-size: 0.85rem;
-      font-weight: bold;
-      margin-bottom: 5px;
-      color: var(--primary);
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
     }
 
     input {
       width: 100%;
-      padding: 12px 15px;
-      border: 1.5px solid #e0e0e0;
+      padding: 12px;
       border-radius: 8px;
+      border: 1px solid #334155;
+      background: var(--bg);
+      color: #fff;
       font-size: 1rem;
-      box-sizing: border-box;
-      transition: border-color 0.3s;
-    }
-
-    input:focus {
       outline: none;
-      border-color: var(--accent);
     }
 
     button {
       width: 100%;
-      padding: 14px;
-      background-color: var(--accent);
-      color: white;
-      border: none;
+      padding: 12px;
       border-radius: 8px;
-      font-size: 1rem;
+      border: none;
+      background: var(--accent);
+      color: #000;
       font-weight: bold;
+      font-size: 1rem;
       cursor: pointer;
-      transition: background-color 0.3s, transform 0.1s;
-      margin-top: 10px;
+      transition: background 0.2s;
     }
 
     button:hover {
-      background-color: #0096c7;
+      background: #38bdf8;
     }
 
-    button:active {
-      transform: scale(0.98);
-    }
-
-    button:disabled {
-      background-color: #ccc;
-    }
-
-    #msg {
+    /* CHAT DE AGENTE GEHN */
+    #chat-section {
+      display: none; /* Se activa tras suscribirse o iniciar */
       margin-top: 15px;
-      font-weight: bold;
-      font-size: 0.95rem;
     }
 
-    footer {
-      margin-top: auto;
-      padding: 20px;
-      font-size: 0.8rem;
-      color: #888;
+    .chat-box {
+      height: 320px;
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 15px;
+      overflow-y: auto;
+      border: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .msg {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .msg.bot {
+      background: #334155;
+      color: #fff;
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+    }
+
+    .msg.user {
+      background: var(--accent);
+      color: #000;
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+    }
+
+    .chat-input-container {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input-container input {
+      flex: 1;
+    }
+
+    .chat-input-container button {
+      width: auto;
+      padding: 0 18px;
+    }
+
+    #msg-status {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--accent);
     }
   </style>
 
@@ -154,41 +169,44 @@
 <body>
 
   <header>
-    <img src="logo.jpg" alt="Logo GEHN" style="max-width: 160px; height: auto; display: block; margin: 0 auto 10px;">
-    <p>Ecosistema Inteligente de Suscripciones</p>
+    <img src="logo.jpg" alt="GEHN Logo">
+    <h1>Ecosistema GEHN</h1>
   </header>
 
-  <main>
-    <div class="card">
-      <h2>Únete a la Red</h2>
-      <p>Registra tu acceso para recibir novedades e interactuar con el ecosistema GEHN.</p>
-
-      <form id="registroForm">
-        <div class="input-group">
+  <div class="container">
+    <!-- SECCIÓN REGISTRO -->
+    <div id="register-section">
+      <h2 style="margin-bottom: 15px; text-align: center; font-size: 1.3rem;">Registro de Suscriptor</h2>
+      <form id="subscribeForm">
+        <div class="form-group">
           <label for="nombre">Nombre completo</label>
           <input type="text" id="nombre" placeholder="Ej. Juan Pérez" required>
         </div>
-
-        <div class="input-group">
+        <div class="form-group">
           <label for="correo">Correo electrónico</label>
           <input type="email" id="correo" placeholder="ejemplo@correo.com" required>
         </div>
-
-        <button type="submit" id="btnSubmit">Completar Registro</button>
+        <button type="submit" id="btnSubmit">Acceder a GEHN AI</button>
       </form>
-
-      <div id="msg"></div>
+      <div id="msg-status"></div>
     </div>
-  </main>
 
-  <footer>
-    &copy; 2026 GEHN. Todos los derechos reservados.
-  </footer>
+    <!-- SECCIÓN CHAT IA -->
+    <div id="chat-section">
+      <h3 style="margin-bottom: 10px; color: var(--accent);">Agente Inteligente GEHN</h3>
+      <div class="chat-box" id="chatBox">
+        <div class="msg bot">¡Hola! Soy el asistente virtual del Ecosistema GEHN. ¿En qué te puedo ayudar hoy?</div>
+      </div>
+      <div class="chat-input-container">
+        <input type="text" id="userMsg" placeholder="Escribe tu consulta...">
+        <button onclick="sendMessage()">Enviar</button>
+      </div>
+    </div>
+  </div>
 
   <script>
-    // Configuración de Firebase
     const firebaseConfig = {
-      apiKey: "AIzaSyDQPgQGLTwqLQtQPZUreCyOxQQPViobcU",
+      apiKey: "AIzaSyDQPgQGLTwqLQtQPZUreCy0xQQPViobcu",
       authDomain: "gehn-107a0.firebaseapp.com",
       projectId: "gehn-107a0",
       storageBucket: "gehn-107a0.firebasestorage.app",
@@ -196,45 +214,67 @@
       appId: "1:1058890124939:web:d04fae09aaf8e29e5c8e8e"
     };
 
-    // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Guardar datos en Firestore
-    const form = document.getElementById('registroForm');
-    const msg = document.getElementById('msg');
-    const btn = document.getElementById('btnSubmit');
+    const form = document.getElementById('subscribeForm');
+    const statusDiv = document.getElementById('msg-status');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      btn.disabled = true;
-      msg.style.color = '#333';
-      msg.innerText = 'Procesando registro...';
-
       const nombre = document.getElementById('nombre').value;
       const correo = document.getElementById('correo').value;
 
+      statusDiv.textContent = "Conectando al ecosistema...";
+
       try {
-        await db.collection('suscriptores').add({
-          nombre: nombre,
-          correo: correo,
-          fechaRegistro: new Date()
+        await db.collection("Usuarios").add({
+          Nombre: nombre,
+          Email: correo,
+          CreadoEn: new Date().toISOString()
         });
-        msg.style.color = '#2a9d8f';
-        msg.innerText = '¡Bienvenido! Te has registrado con éxito.';
-        form.reset();
+
+        statusDiv.textContent = "¡Bienvenido a GEHN!";
+        
+        // Ocultar registro y mostrar chat
+        setTimeout(() => {
+          document.getElementById('register-section').style.display = 'none';
+          document.getElementById('chat-section').style.display = 'block';
+        }, 1000);
+
       } catch (error) {
-        msg.style.color = '#e76f51';
-        msg.innerText = 'Error al registrar: ' + error.message;
-      } finally {
-        btn.disabled = false;
+        console.error("Error guardando datos:", error);
+        statusDiv.textContent = "Ocurrió un error. Intenta de nuevo.";
       }
     });
 
-    // Registrar Service Worker para PWA
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
+    // Lógica del Chat
+    function sendMessage() {
+      const input = document.getElementById('userMsg');
+      const chatBox = document.getElementById('chatBox');
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      // Mostrar mensaje del usuario
+      const userMsgDiv = document.createElement('div');
+      userMsgDiv.className = 'msg user';
+      userMsgDiv.textContent = text;
+      chatBox.appendChild(userMsgDiv);
+
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // Respuesta de prueba del Agente
+      setTimeout(() => {
+        const botMsgDiv = document.createElement('div');
+        botMsgDiv.className = 'msg bot';
+        botMsgDiv.textContent = "Entendido. Mi conexión con la API de Google AI Studio está lista para vincular tus instrucciones.";
+        chatBox.appendChild(botMsgDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 800);
     }
   </script>
 </body>
 </html>
+    
