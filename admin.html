@@ -13,6 +13,7 @@
       --text-color: #ffffff;
       --text-muted: #a0aec0;
       --border-color: #3a506b;
+      --error-color: #ff6b6b;
     }
 
     * {
@@ -27,6 +28,79 @@
       color: var(--text-color);
       min-height: 100vh;
       padding: 20px;
+    }
+
+    /* PANTALLA DE LOGIN */
+    #login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .login-box {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 30px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .login-box h2 {
+      color: var(--accent-color);
+      margin-bottom: 20px;
+      font-size: 1.4rem;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin-bottom: 15px;
+      font-size: 1rem;
+      outline: none;
+      text-align: center;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background-color: var(--accent-color);
+      color: #000;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .login-box button:hover {
+      background-color: #48cae4;
+    }
+
+    #login-error {
+      color: var(--error-color);
+      font-size: 0.85rem;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* CONTENIDO DEL PANEL */
+    #admin-content {
+      display: none; /* Oculto hasta iniciar sesión */
     }
 
     header {
@@ -121,13 +195,7 @@
       background-color: rgba(255, 255, 255, 0.02);
     }
 
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-muted);
-    }
-
-    .empty-state {
+    .loading, .empty-state {
       text-align: center;
       padding: 40px;
       color: var(--text-muted);
@@ -140,93 +208,130 @@
 </head>
 <body>
 
-  <header>
-    <div class="logo-container">
-      <img src="logo.jpg" alt="Logo GEHN">
-      <h1>Panel de Administración GEHN</h1>
+  <!-- VENTANA DE LOGIN -->
+  <div id="login-overlay">
+    <div class="login-box">
+      <h2>Acceso Administrador GEHN</h2>
+      <input type="password" id="admin-pass" placeholder="Ingresa la contraseña">
+      <button onclick="checkAccess()">Ingresar al Panel</button>
+      <p id="login-error">Contraseña incorrecta</p>
     </div>
-    <span class="badge">Ecosistema Activo</span>
-  </header>
+  </div>
 
-  <main>
-    <div class="stats-card">
-      <div class="stat-item">
-        <h3 id="total-users">0</h3>
-        <p>Suscriptores Totales</p>
+  <!-- PANEL DE ADMINISTRACIÓN -->
+  <div id="admin-content">
+    <header>
+      <div class="logo-container">
+        <img src="logo.jpg" alt="Logo GEHN">
+        <h1>Panel de Administración GEHN</h1>
       </div>
-      <div class="stat-item">
-        <h3 id="last-updated">--</h3>
-        <p>Última Actualización</p>
-      </div>
-    </div>
+      <span class="badge">Ecosistema Activo</span>
+    </header>
 
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Nombre Completo</th>
-            <th>Correo Electrónico</th>
-            <th>Fecha de Registro</th>
-          </tr>
-        </thead>
-        <tbody id="users-table-body">
-          <tr>
-            <td colspan="3" class="loading">Cargando registros de la red GEHN...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </main>
+    <main>
+      <div class="stats-card">
+        <div class="stat-item">
+          <h3 id="total-users">0</h3>
+          <p>Suscriptores Totales</p>
+        </div>
+        <div class="stat-item">
+          <h3 id="last-updated">--</h3>
+          <p>Última Actualización</p>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre Completo</th>
+              <th>Correo Electrónico</th>
+              <th>Fecha de Registro</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <tr>
+              <td colspan="3" class="loading">Cargando registros de la red GEHN...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
 
   <script>
-    // Configuración e Inicialización de Firebase
-    // Configuración e Inicialización de Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyDQPgQGLTwqLQtQPZUreCy0xQQPViobcu",
-      authDomain: "gehn-107a0.firebaseapp.com",
-      projectId: "gehn-107a0",
-      storageBucket: "gehn-107a0.firebasestorage.app",
-      messagingSenderId: "1058890124939",
-      appId: "1:1058890124939:web:d04fae09aaf8e29e5c8e8e"
-    };
+    // CONTRASEÑA DE ACCESO (Puedes cambiarla aquí cuando quieras)
+    const SECRET_KEY = "gehn2026";
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    function checkAccess() {
+      const inputPass = document.getElementById('admin-pass').value;
+      const errorMsg = document.getElementById('login-error');
 
-    const tableBody = document.getElementById('users-table-body');
-    const totalUsersElem = document.getElementById('total-users');
-    const lastUpdatedElem = document.getElementById('last-updated');
-
-    // Consultar lista de usuarios en tiempo real
-    db.collection("Usuarios").onSnapshot((snapshot) => {
-      tableBody.innerHTML = "";
-      
-      if (snapshot.empty) {
-        tableBody.innerHTML = `<tr><td colspan="3" class="empty-state">No hay suscriptores registrados aún.</td></tr>`;
-        totalUsersElem.textContent = "0";
-        return;
+      if (inputPass === SECRET_KEY) {
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('admin-content').style.display = 'block';
+        initFirebase();
+      } else {
+        errorMsg.style.display = 'block';
       }
+    }
 
-      totalUsersElem.textContent = snapshot.size;
-      const now = new Date();
-      lastUpdatedElem.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        const row = document.createElement('tr');
-        
-        row.innerHTML = `
-          <td><strong>${data.Nombre || 'Sin nombre'}</strong></td>
-          <td>${data.Email || 'Sin correo'}</td>
-          <td>${data.CreadoEn || 'Fecha desconocida'}</td>
-        `;
-        
-        tableBody.appendChild(row);
-      });
-    }, (error) => {
-      console.error("Error cargando usuarios:", error);
-      tableBody.innerHTML = `<tr><td colspan="3" class="loading" style="color: #ff6b6b;">Error al cargar la base de datos. Verifica los permisos de Firestore.</td></tr>`;
+    // Permitir ingresar con la tecla Enter
+    document.getElementById('admin-pass').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        checkAccess();
+      }
     });
+
+    // Inicializar Firebase solo tras autenticarse
+    function initFirebase() {
+      const firebaseConfig = {
+        apiKey: "AIzaSyDQPgQGLTwqLQtQPZUreCy0xQQPViobcu",
+        authDomain: "gehn-107a0.firebaseapp.com",
+        projectId: "gehn-107a0",
+        storageBucket: "gehn-107a0.firebasestorage.app",
+        messagingSenderId: "1058890124939",
+        appId: "1:1058890124939:web:d04fae09aaf8e29e5c8e8e"
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
+      const tableBody = document.getElementById('users-table-body');
+      const totalUsersElem = document.getElementById('total-users');
+      const lastUpdatedElem = document.getElementById('last-updated');
+
+      db.collection("Usuarios").onSnapshot((snapshot) => {
+        tableBody.innerHTML = "";
+        
+        if (snapshot.empty) {
+          tableBody.innerHTML = `<tr><td colspan="3" class="empty-state">No hay suscriptores registrados aún.</td></tr>`;
+          totalUsersElem.textContent = "0";
+          return;
+        }
+
+        totalUsersElem.textContent = snapshot.size;
+        const now = new Date();
+        lastUpdatedElem.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const row = document.createElement('tr');
+          
+          row.innerHTML = `
+            <td><strong>${data.Nombre || 'Sin nombre'}</strong></td>
+            <td>${data.Email || 'Sin correo'}</td>
+            <td>${data.CreadoEn || 'Fecha desconocida'}</td>
+          `;
+          
+          tableBody.appendChild(row);
+        });
+      }, (error) => {
+        console.error("Error cargando usuarios:", error);
+        tableBody.innerHTML = `<tr><td colspan="3" class="loading" style="color: #ff6b6b;">Error al cargar la base de datos.</td></tr>`;
+      });
+    }
   </script>
 </body>
 </html>
+  
